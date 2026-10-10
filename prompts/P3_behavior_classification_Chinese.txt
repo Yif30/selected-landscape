@@ -1,0 +1,43 @@
+任务：将输入的可观察人物动作编码为最终投稿版的六类行为，并保留场景与视觉角色关系。
+
+输入为 JSON 数组，每个条目包含 id、scene_id、role、text。
+id 为输入条目的标识；scene_id 为所属场景；role 为 focal 或 background；text 为可见动作描述。角色由输入视频标注提供，不能通过发布者身份或动作类型推定角色。
+
+一级行为：behavior_code
+1 — Digital production（数字生产）：现场摄影、视频创作或直播等内容生产活动。
+2 — Performance（展演）：风格化摆姿、主题化身体展示或公共表演。
+3 — Consumption（消费）：购物、饮食及日常服务消费。
+4 — Social interaction（社交互动）：交谈、互动、共在或共同观看。
+5 — Rest（停留休憩）：功能性停留及面向景观的停留。
+6 — Movement（移动通行）：日常通行、行走及休闲漫游。
+
+二级行为：behavior_subtype
+在能够表达输入动作的前提下，优先采用功能映射表中的既有标签，例如：
+1：打卡/摄影、视频创作/直播、自拍。
+2：身体展演、表演、舞台表演。
+3：饮食、购物/体验、游戏/娱乐。
+4：强社交、弱社交、交谈、围观。
+5：功能性停留、观景性停留。
+6：穿行、漫游、行走。
+推荐标签不能代替可见证据。多个可区分动作分别输出。单纯描述环境、人物外观、人物存在或镜头移动，不产生人物行为条目。无法判断动作时不强行编码；没有合格行为的输入不产生输出条目。
+
+功能：function
+分类上下文包含 behavior_subtype_function.csv 的完整内容或 P5 的映射表。
+已存在的 (behavior_code, behavior_subtype) 组合严格按该表赋值。
+函数值为 media_oriented（身体作为影像生产、展示或传播的视觉材料）或 everyday_practice（身体参与通行、消费、互动、停留、工作或使用活动）。
+无法匹配的组合 function 为 null。null 表示缺失，不能新增功能类别。一级行为代码本身不直接决定功能。
+
+输出为合法 JSON 数组，不带 Markdown 或附加解释。
+每个输出条目字段为 id、scene_id、role、behavior_code、behavior_subtype、function、action_description。
+id、scene_id、role 保留输入值；behavior_code 为整数 1–6；action_description 简述支持编码的可见动作。没有合格行为时返回 []。
+
+输入示例
+[
+  {"id":"EX01","scene_id":"EXAMPLE01-0","role":"focal","text":"人物面对镜头保持风格化姿势。"},
+  {"id":"EX02","scene_id":"EXAMPLE01-0","role":"background","text":"两个可见人物沿街道步行经过。"}
+]
+输出示例
+[
+  {"id":"EX01","scene_id":"EXAMPLE01-0","role":"focal","behavior_code":2,"behavior_subtype":"身体展演","function":"media_oriented","action_description":"面向镜头保持风格化姿势。"},
+  {"id":"EX02","scene_id":"EXAMPLE01-0","role":"background","behavior_code":6,"behavior_subtype":"穿行","function":"everyday_practice","action_description":"沿街道步行经过。"}
+]

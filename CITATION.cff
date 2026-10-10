@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "Citation metadata for the research data and analysis code."
+title: "Selected landscapes in short-video representations of urban places: data and code"
+type: dataset
+version: 1.0.0
+authors:
+  - family-names: Zhao
+    given-names: Yifan
+  - family-names: Xi
+    given-names: Guangliang
+  - family-names: Chen
+    given-names: Cheng
+  - family-names: Zhang
+    given-names: Min
+  - family-names: Hou
+    given-names: Jingyi
+  - family-names: Guo
+    given-names: Jie
+  - family-names: Guo
+    given-names: Chuyi
+  - family-names: Zhen
+    given-names: Feng
+license:
+  - CC-BY-4.0
+  - MIT

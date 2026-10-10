@@ -1,0 +1,15 @@
+{
+  "street_blocks": 204,
+  "provinces": 31,
+  "retrieval_records": 45582,
+  "unique_source_video_ids": 41233,
+  "structured_research_videos": 42344,
+  "classified_research_videos": 42076,
+  "scenes": 459487,
+  "scene_duration_seconds": 3233179.2000000007,
+  "scene_element_rows": 1064105,
+  "environment_elements": 42874,
+  "behavior_records": 361666,
+  "archived_research_translations": 42345,
+  "video_inventory_records": 45804
+}

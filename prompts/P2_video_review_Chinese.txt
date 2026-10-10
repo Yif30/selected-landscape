@@ -1,0 +1,28 @@
+任务：依据输入视频完善 P1 格式的结构化场景记录，使分类、可见内容与时间信息一致。
+
+输入
+- 原视频及 video_id、block_id。
+- P1_primary_video_interpretation_Chinese.txt 中的完整分类和字段定义。
+- 待完善的 P1 JSON 对象。
+- element_dictionary.csv 和 behavior_subtype_function.csv 的内容。
+
+分类依据
+scene 仅使用 S1 Local scenes、S2 Curated local scenes、S3 Glocal scenes、S4 Global scenes。
+environment[].category 仅使用 Architecture、Natural features、Street infrastructure、Landscape decoration、Commercial signage、Consumption interfaces、Display facilities。
+behavior[].role 仅使用 focal 或 background，依据当前场景的主要视觉焦点判断。
+behavior[].behavior_code 仅使用整数 1 Digital production、2 Performance、3 Consumption、4 Social interaction、5 Rest、6 Movement。
+behavior[].function 仅使用 media_oriented 或 everyday_practice；已有行为组合采用功能映射表。映射表以外的组合使用 null，且保留动作描述。功能不得从一级行为代码直接推定。
+
+记录处理
+片段边界与原视频时间轴一致；start_seconds 单调递增，duration_seconds 不小于零。场景边界有变化时，scene_id 与新的开始时间对应，同一视频内 scene_id 唯一。
+场景类别依照可见环境与活动组合判断，不以拍摄方式或推测的发布者身份替代分类定义。
+环境词项须有可见物理依据，已有词项的 element_id 和类别服从元素字典；同一场景同一元素去重。
+has_focal、has_background 表示人物是否可见。无人角色没有行为条目；任何角色行为条目对应的人物存在标记均为 true；有可见人物但动作不明时可保留人物存在标记，behavior 不增加无法确认的动作。
+每条人物行为包含 role、behavior_code、behavior_subtype、function、action_description；相同行为不重复计数。涉及多个可观察动作时可分别记录。
+字幕与标识文字仅保留可辨认内容。缺少视频依据的主题、身份或心理判断不写入描述。
+缺失类别用 null 表示，不创设新增类别。空 environment、behavior 或文字数组使用 []。
+video_summary.scene_count 等于 scene_analysis 的条目数；overall_theme、overall_style 与可见视频内容一致。
+
+输出
+仅输出完善后的完整 JSON 对象，与 P1 字段结构一致，顶层为 video_id、block_id、scene_analysis、video_summary。所有保留场景均完整输出。
+不输出修改清单、原值与新值对照、检查结论或附加报告。无需修改的输入按同一结构完整返回。

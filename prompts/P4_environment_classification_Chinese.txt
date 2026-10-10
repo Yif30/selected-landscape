@@ -1,0 +1,35 @@
+任务：将输入的可见物理环境词项归入最终投稿版的七类环境。
+
+输入为 JSON 数组，每个条目包含 id、element、context。id 标识输入词项，element 为中文物理元素名称，context 为可见空间语境。同时提供 element_dictionary.csv 的内容。
+
+类别：category
+Architecture — Built form, façades and structural components. 建筑形态、立面及结构构件。
+Natural features — Vegetation and other natural features appearing as environmental content. 植被、水体、天空及其他自然环境内容。
+Street infrastructure — Paving, access and street-service infrastructure. 铺地、通行及街道服务设施。
+Landscape decoration — Ornamental and scenographic elements. 装饰物、景观陈设及布景元素。
+Commercial signage — Signs, logos and commercial identification. 商业招牌、标志及商业识别内容。
+Consumption interfaces — Goods, food and service-related interfaces. 商品、食物及服务接触界面。
+Display facilities — Stages and facilities supporting performance or exhibition. 舞台及支撑表演、展览的设施。
+
+归类规则
+匹配最终元素字典的词项采用字典中的 element、element_id、category。
+未匹配但可见物理内容和类别清楚的词项可保留 element，element_id 为 null，category 仍从七项中选择。
+自然环境不包含人物。人物、动作、表演事件、心理状态、无法确认物理内容的描述及随人物移动的个人物件不作为环境条目输出。
+商业标识与商品服务界面按可见功能区分；建筑结构与装饰物按空间构成区分；表演行为与支撑表演的物理设施分开识别。场景的商业或文化氛围不能替代元素本身的类别。
+不能因归属不明将词项统一放入某一环境类别。缺少归类证据的输入不产生输出条目。
+一个输入词项输出一个符合定义的类别，不新增类别。
+
+输出为合法 JSON 数组，仅保留合格环境词项，不附带 Markdown 或解释文本。
+条目字段为 id、element_id、element、category。id 对应输入；element_id 来自最终字典或为 null；category 使用七项英文类别名。
+全部输入均不构成合格物理环境时输出 []。
+
+输入示例
+[
+  {"id":"EX01","element":"示例街道铺地","context":"固定的街道路面铺装。"},
+  {"id":"EX02","element":"示例舞台设施","context":"供公共表演使用的固定舞台。"}
+]
+输出示例
+[
+  {"id":"EX01","element_id":null,"element":"示例街道铺地","category":"Street infrastructure"},
+  {"id":"EX02","element_id":null,"element":"示例舞台设施","category":"Display facilities"}
+]

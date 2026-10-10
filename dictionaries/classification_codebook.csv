@@ -1,0 +1,22 @@
+﻿dimension,code,label,definition
+scene,S1,Local scenes,Local specificity in everyday settings and uses.
+scene,S2,Curated local scenes,"Local characteristics with curation, decoration and display orientation."
+scene,S3,Glocal scenes,Local references combined with standardised commercial forms.
+scene,S4,Global scenes,Generic commercial environments with limited local specificity.
+environment,1,Architecture,"Built form, facades and structural components."
+environment,2,Natural features,Vegetation and other natural features appearing as environmental content.
+environment,3,Street infrastructure,"Paving, access and street-service infrastructure."
+environment,4,Landscape decoration,Ornamental and scenographic elements.
+environment,5,Commercial signage,"Signs, logos and commercial identification."
+environment,6,Consumption interfaces,"Goods, food and service-related interfaces."
+environment,7,Display facilities,Stages and facilities supporting performance or exhibition.
+behavior,1,Digital production,On-site shooting and digital content creation.
+behavior,2,Performance,Stylised posing and themed public display.
+behavior,3,Consumption,Daily shopping and service consumption.
+behavior,4,Social interaction,"Conversation, interaction, co-presence and collective observation."
+behavior,5,Rest,Functional stopping and scenery-oriented stopping.
+behavior,6,Movement,Routine transit and leisure wandering.
+role,focal,Focal figures,Visible figures occupying the primary visual focus of a scene.
+role,background,Background figures,Visible figures without constituting the primary visual focus.
+function,media_oriented,Media-oriented behaviour,"The body functions as visual material for image production, display or circulation; assigned through the subtype crosswalk."
+function,everyday_practice,Everyday practice,"The body participates in movement, consumption, interaction, rest, work or use; assigned through the subtype crosswalk."

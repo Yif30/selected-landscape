@@ -1,0 +1,36 @@
+﻿file,field,type,unit,definition
+blocks.csv,block_id,string,,Four-digit research block identifier.
+blocks.csv,block_name,string,,Official sampled street-block name.
+blocks.csv,province,string,,Province-level administrative unit.
+blocks.csv,city,string,,City in the source block register.
+blocks.csv,district,string,,District in the source block register.
+blocks.csv,longitude_wgs84,float,degrees east,WGS84 longitude.
+blocks.csv,latitude_wgs84,float,degrees north,WGS84 latitude.
+blocks.csv,collection_batch,string,,Collection batch label.
+videos.csv,video_id,string,,"Eight-digit research-video identifier, distinct for each block search record."
+videos.csv,block_id,string,,Parent block identifier.
+videos.csv,source_video_id,string,,Platform identifier from source index; blank if source-index metadata are absent.
+videos.csv,source_url,string,,Canonical source link; blank if source-index metadata are absent.
+videos.csv,collection_month_reported,string,YYYY-MM,Collection month reported in the manuscript.
+videos.csv,in_retrieval_index,boolean,,Whether the identifier occurs in the available retrieval index.
+videos.csv,has_structured_scene,boolean,,At least one scene record in the archived scene table.
+videos.csv,has_archived_translation,boolean,,Archived translation file exists for the research identifier.
+videos.csv,classified_scene_count,integer,scenes,Number of released S1-S4 scenes.
+scenes.csv,scene_id,string,,Research-video identifier followed by scene start timestamp.
+scenes.csv,video_id,string,,Parent research-video identifier.
+scenes.csv,block_id,string,,Parent street-block identifier.
+scenes.csv,start_seconds,float,seconds,Scene start timestamp.
+scenes.csv,duration_seconds,float,seconds,Scene duration; non-negative.
+scenes.csv,scene,enum,,"S1, S2, S3 or S4."
+scenes.csv,has_focal,boolean,,Focal presence indicated by the scene-presence coding or an associated role–behaviour record.
+scenes.csv,has_background,boolean,,Background presence indicated by the scene-presence coding or an associated role–behaviour record.
+environment.csv,scene_id,string,,Parent scene identifier.
+environment.csv,element_id,string,,Final element-dictionary identifier.
+environment.csv,element,string,,"Standardized environmental token, retained in Chinese."
+environment.csv,category,enum,,One of seven environmental categories.
+behaviors.csv,behavior_id,string,,Unique identifier for each released role-behaviour row.
+behaviors.csv,scene_id,string,,Parent scene identifier.
+behaviors.csv,role,enum,,focal or background.
+behaviors.csv,behavior_code,integer,,Behaviour class 1-6.
+behaviors.csv,behavior_subtype,string,,Subtype label used by the functional crosswalk.
+behaviors.csv,function,enum,,media_oriented or everyday_practice.

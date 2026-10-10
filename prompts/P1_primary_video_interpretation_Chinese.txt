@@ -1,0 +1,108 @@
+任务：从输入短视频提取连续场景、可见物理环境和可观察人物行为，采用最终投稿版分类，输出结构化 JSON。
+
+输入
+- 视频及研究编号 video_id、block_id。
+- 最终分类定义。
+- 环境元素字典 element_dictionary.csv 的内容。
+- 行为功能映射表 behavior_subtype_function.csv 的内容；P5 提供同一映射。
+字典或映射表须作为任务上下文提供，文件名本身不代表模型已读取文件内容。
+
+场景单位
+场景是具有连续空间内容、主要活动或叙事焦点的片段。镜头切换本身不必产生新场景；主要地点、环境结构、主要活动或叙事焦点改变时可划分新场景。开始时间按视频实际时间轴记录，单位为秒；duration_seconds 为该片段持续时间。时间顺序单调递增，持续时间不小于零；时间信息不可凭空补齐。scene_id 由 video_id、连字符和开始时间组成，例如 01010001-0.1。时间部分采用十进制秒，去除无意义的末尾零。
+
+场景分类：scene
+每个可判断场景仅选择一个代码。
+S1 — Local scenes（地方性场景）：Local specificity in everyday settings and uses. 地方特征体现在日常环境及其使用中。
+S2 — Curated local scenes（策展式地方性场景）：Local characteristics with curation, decoration and display orientation. 地方特征经过布置、装饰或面向展示的组织。
+S3 — Glocal scenes（全球地方融合场景）：Local references combined with standardised commercial forms. 地方性符号或特征与标准化商业形式结合。
+S4 — Global scenes（全球化场景）：Generic commercial environments with limited local specificity. 环境以通用商业形式为主，地方特征有限。
+判断依据是场景内可见环境、使用活动及其组合。拍摄视角、稳定器、品牌或建筑类型均不能单独决定类别。背景音乐、字幕宣称的文化属性或推测的拍摄者身份不构成独立分类依据。证据不足时 scene 为 null，且在 scene_description 中简述可见内容；不得新增类别。
+
+环境分类：environment[].category
+环境记录限于可见的物理环境元素，类别字符串严格采用以下七项。
+Architecture — Built form, façades and structural components. 建筑形态、立面、门窗及结构构件。
+Natural features — Vegetation and other natural features appearing as environmental content. 植被、水体、天空及其他自然环境内容。
+Street infrastructure — Paving, access and street-service infrastructure. 铺地、通行及街道服务设施。
+Landscape decoration — Ornamental and scenographic elements. 装饰物、景观陈设及布景元素。
+Commercial signage — Signs, logos and commercial identification. 商业招牌、标志及商业识别内容。
+Consumption interfaces — Goods, food and service-related interfaces. 商品、食物及服务接触界面。
+Display facilities — Stages and facilities supporting performance or exhibition. 舞台及支撑表演、展览的设施。
+
+element 使用精简、可识别的中文物理元素名称。同一场景同一元素只记录一次。字典已有词项采用字典中的 element、element_id、category；不得自行覆盖已有归属。未匹配字典但物理内容和类别清楚的元素可记录 element，element_id 为 null，category 仍从七项中选择。缺少可见物理依据的词项不进入 environment。人物及行为事件归入 behavior；随人物移动的手机、背包等个人物件不进入环境词汇。无法辨认的文字不补写为商业标识。环境为空时输出 []。
+
+人物角色：behavior[].role
+focal — Focal figures：在当前场景中构成主要视觉焦点的可见人物。
+background — Background figures：可见但未构成主要视觉焦点的人物。
+角色依据当前画面位置、构图焦点和呈现关系判断，可随场景改变。角色与发布者身份、职业及是否自拍没有固定对应关系。屏幕外拍摄者不能仅因持有镜头而获得人物行为记录。has_focal、has_background 分别标记两类人物是否可见。未出现的角色不产生行为记录。任何 focal 行为记录对应的 has_focal 均为 true，任何 background 行为记录对应的 has_background 均为 true。人物身份、年龄、国籍及职业不作推测。
+
+行为一级分类：behavior[].behavior_code
+使用整数 1–6，两个角色共用同一体系。
+1 — Digital production（数字生产）：On-site shooting and digital content creation. 现场摄影、视频创作或直播等可见内容生产活动。
+2 — Performance（展演）：Stylised posing and themed public display. 风格化摆姿、主题化身体展示或公共表演。
+3 — Consumption（消费）：Daily shopping and service consumption. 购物、饮食及日常服务消费。
+4 — Social interaction（社交互动）：Conversation, interaction, co-presence and collective observation. 交谈、互动、共在或共同观看。
+5 — Rest（停留休憩）：Functional stopping and scenery-oriented stopping. 功能性停留及面向景观的停留。
+6 — Movement（移动通行）：Routine transit and leisure wandering. 日常通行、行走及休闲漫游。
+
+behavior_subtype 使用能够概括可见动作的中文二级标签。与映射表已有标签语义相同时保留其原文，不通过缩写、翻译或任意同义替换改变匹配键。新行为依据六类定义编码，二级标签采用简洁动作名称。多个可区分行为分别记录；同一场景同一角色的相同行为只记录一次。仅有环境描述或无法辨认动作时不产生行为条目，不新增一级类别。镜头的移动不等于人物的 Movement，场景中存在食物不等于人物正在 Consumption。
+
+行为功能：behavior[].function
+media_oriented — Media-oriented behaviour（媒介导向行为）：身体作为影像生产、展示或传播的视觉材料。
+everyday_practice — Everyday practice（日常实践）：身体参与通行、消费、互动、停留、工作或使用活动。
+已存在的 (behavior_code, behavior_subtype) 组合按映射表赋值。功能不能由一级代码直接推定。映射表之外的组合 function 为 null；action_description 保留可见动作和语境。null 是缺失值，不构成第三类功能。不得仅因人物出现在视频中，将其行为全部归为 media_oriented。
+
+辅助描述
+scene_description：可见环境及活动的简要描述。
+cinematography：景别、构图、视角、镜头移动及照明的客观描述；不作为人物行为类别。
+text_content：只记录可辨认的标识文字及字幕，不补写模糊文字。
+action_description：支持该条行为判断的可见动作及语境。
+video_summary：整体主题与风格的简要描述，场景数量来自 scene_analysis 的长度。
+
+输出
+仅输出一个合法 JSON 对象，不附带 Markdown、解释文本或修改记录。
+顶层字段为 video_id、block_id、scene_analysis、video_summary。
+每个场景字段为 scene_id、video_id、block_id、start_seconds、duration_seconds、scene、has_focal、has_background、scene_description、cinematography、text_content、environment、behavior。
+cinematography 字段为 shot_scale、framing、perspective、camera_movement、lighting，值为简要字符串，无法判断时为 null。
+text_content 字段为 signboards、subtitles，值为字符串数组，未识别内容为 []。
+environment 条目字段为 element_id、element、category。
+behavior 条目字段为 role、behavior_code、behavior_subtype、function、action_description。
+video_summary 字段为 scene_count、overall_theme、overall_style。
+
+格式示例（示例不描述真实研究视频）
+{
+  "video_id": "EXAMPLE01",
+  "block_id": "EXAMPLE",
+  "scene_analysis": [
+    {
+      "scene_id": "EXAMPLE01-0",
+      "video_id": "EXAMPLE01",
+      "block_id": "EXAMPLE",
+      "start_seconds": 0,
+      "duration_seconds": 5,
+      "scene": "S2",
+      "has_focal": true,
+      "has_background": true,
+      "scene_description": "经过装饰的地方性街道空间，一人面向镜头摆姿，背景人物步行经过。",
+      "cinematography": {
+        "shot_scale": "中景",
+        "framing": "主体位于画面中央",
+        "perspective": "平视",
+        "camera_movement": "固定",
+        "lighting": "自然光"
+      },
+      "text_content": {"signboards": [], "subtitles": []},
+      "environment": [
+        {"element_id": null, "element": "示例装饰雕塑", "category": "Landscape decoration"}
+      ],
+      "behavior": [
+        {"role": "focal", "behavior_code": 2, "behavior_subtype": "身体展演", "function": "media_oriented", "action_description": "面向镜头保持风格化姿势。"},
+        {"role": "background", "behavior_code": 6, "behavior_subtype": "穿行", "function": "everyday_practice", "action_description": "背景人物沿通道经过。"}
+      ]
+    }
+  ],
+  "video_summary": {
+    "scene_count": 1,
+    "overall_theme": "装饰街道中的人物呈现",
+    "overall_style": "固定镜头记录"
+  }
+}

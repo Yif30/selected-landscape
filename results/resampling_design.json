@@ -1,0 +1,23 @@
+{
+  "classifier": {
+    "eligible_blocks": 203,
+    "train_blocks": 162,
+    "test_blocks": 41,
+    "repeats": 100,
+    "cap": 50,
+    "seed": 20260916
+  },
+  "rarefaction": {
+    "eligible_blocks": 187,
+    "pairs_per_repeat": 17391,
+    "depths": [
+      2,
+      5,
+      10,
+      15,
+      20
+    ],
+    "repeats": 50,
+    "seed": 20260903
+  }
+}
